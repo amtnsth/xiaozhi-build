@@ -1,0 +1,44 @@
+{
+  "name": "XiaoZhi-ESP32-FullSuite",
+  "image": "mcr.microsoft.com/devcontainers/base:jammy",
+
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/python:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {},
+    "ghcr.io/devcontainers-contrib/features/cmake:1": {},
+    "ghcr.io/devcontainers-contrib/features/git:1": {},
+    "ghcr.io/devcontainers-contrib/features/node:2": {}
+  },
+
+  "postCreateCommand": "
+    sudo apt update &&
+    sudo apt install -y wget flex bison gperf python3-pip python3-venv ninja-build ccache libffi-dev libssl-dev autoconf automake libtool pkg-config qemu-system-x86 netcat-openbsd &&
+    mkdir -p ~/esp &&
+    cd ~/esp &&
+    git clone --recursive https://github.com/espressif/esp-idf.git &&
+    cd esp-idf &&
+    git checkout release/v5.2 &&
+    ./install.sh esp32s3 &&
+    echo 'source ~/esp/esp-idf/export.sh >/dev/null 2>&1' >> ~/.bashrc &&
+
+    echo 'Cloning XiaoZhi firmware...' &&
+    cd ~ &&
+    git clone https://github.com/78/xiaozhi-esp32.git || true &&
+
+    echo 'Installing Web Debug server...' &&
+    npm install -g http-server &&
+
+    echo 'DONE: Full environment is ready.'
+  ",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "espressif.esp-idf-extension",
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "ms-vscode.js-debug"
+      ]
+    }
+  }
+}
